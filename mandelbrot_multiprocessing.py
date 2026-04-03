@@ -3,7 +3,7 @@ import pandas as pd
 import time
 from multiprocessing import Pool, cpu_count
  
-# ── import shared helpers ──────────────────────────────────────────────────────
+
 from mandelbrot_core import (
     build_complex_grid,
     mandelbrot_numpy,
