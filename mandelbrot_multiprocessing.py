@@ -59,3 +59,34 @@ def experiment_chunk_size(width=1000, height=1000, max_iter=100, repeats=3):
             print(f"  [{done:2d}/{total}] P={P:2d}, chunk={cs:4d}  →  {avg:.3f}s")
  
     return pd.DataFrame(rows) 
+ 
+
+def experiment_speedup(width=1000, height=1000, max_iter=100,
+                       best_chunk=100, repeats=3):
+    
+    process_counts = [1, 2, 4, min(8, cpu_count())]
+ 
+    
+    print(f"\n{'─'*55}")
+    print(f"  Experiment B: Speedup analysis  ({width}×{height}, chunk={best_chunk})")
+    print(f"{'─'*55}")
+    print("  Measuring NumPy baseline …", end=" ", flush=True)
+    t_baseline, _ = timed(mandelbrot_numpy, width, height,
+                          max_iter=max_iter, repeats=repeats)
+    print(f"{t_baseline:.3f}s")
+ 
+    rows = []
+    for P in process_counts:
+        times = []
+        for _ in range(repeats):
+            t0 = time.perf_counter()
+            mandelbrot_parallel(width, height, P, best_chunk, max_iter=max_iter)
+            times.append(time.perf_counter() - t0)
+        avg     = float(np.mean(times))
+        speedup = t_baseline / avg
+        rows.append({"processes": P, "time": avg, "speedup": speedup})
+        print(f"  P={P:2d}  →  {avg:.3f}s   speedup={speedup:.2f}×")
+ 
+    return pd.DataFrame(rows), t_baseline
+
+
