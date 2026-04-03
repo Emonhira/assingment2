@@ -89,4 +89,56 @@ def experiment_speedup(width=1000, height=1000, max_iter=100,
  
     return pd.DataFrame(rows), t_baseline
 
+if __name__ == "__main__":
+    
+    WIDTH    = 1000
+    HEIGHT   = 1000
+    MAX_ITER = 100
+    REPEATS  = 3
+ 
+    print(f"\n{'═'*55}")
+    print(f"  Mandelbrot – Multiprocessing Experiments")
+    print(f"  Grid: {WIDTH}×{HEIGHT}   max_iter={MAX_ITER}")
+    print(f"  CPUs available: {cpu_count()}")
+    print(f"{'═'*55}")
+ 
+    
+    print("\nGenerating sample image (P=4, chunk=100) …")
+    M_sample = mandelbrot_parallel(WIDTH, HEIGHT, num_processes=4,
+                                   chunk_size=100, max_iter=MAX_ITER)
+    plot_mandelbrot(M_sample,
+                    title="Mandelbrot – Parallel (P=4)",
+                    filename="mandelbrot_image.png")
+ 
+   
+    df_chunks = experiment_chunk_size(WIDTH, HEIGHT, MAX_ITER, REPEATS)
+    print("\nChunk-size results:")
+    print(df_chunks.to_string(index=False))
+    df_chunks.to_csv("chunk_size_results.csv", index=False)
+ 
+    plot_chunk_analysis(df_chunks, filename="chunk_size_analysis.png")
+ 
+    
+    best_cs = (
+        df_chunks.groupby("chunk_size")["time"]
+        .mean()
+        .idxmin()
+    )
+    print(f"\nBest chunk size (lowest avg time across all P): {best_cs}")
+ 
 
+    df_speedup, t_base = experiment_speedup(
+        WIDTH, HEIGHT, MAX_ITER, best_chunk=best_cs, repeats=REPEATS
+    )
+    print("\nSpeedup results:")
+    print(df_speedup.to_string(index=False))
+    df_speedup.to_csv("speedup_results.csv", index=False)
+ 
+    plot_speedup(df_speedup, filename="speedup_analysis.png")
+ 
+    print("\n✓ All experiments complete. Output files:")
+    print("    mandelbrot_image.png")
+    print("    chunk_size_analysis.png  /  chunk_size_results.csv")
+    print("    speedup_analysis.png     /  speedup_results.csv")
+ 
+ 
