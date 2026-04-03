@@ -26,3 +26,16 @@ def mandelbrot_numpy(width, height,
  
     return M
  
+def mandelbrot_block(C_chunk, max_iter=100):
+  
+    Z = np.zeros_like(C_chunk)
+    M = np.zeros(C_chunk.shape, dtype=np.int32)
+ 
+    for _ in range(max_iter):
+        mask = np.abs(Z) <= 2
+        if not np.any(mask):          # Note 3: all points diverged → early exit
+            break
+        Z[mask] = Z[mask] ** 2 + C_chunk[mask]
+        M[mask] += 1
+ 
+    return M
