@@ -4,51 +4,30 @@ import time
 import dask.array as da
 from dask.distributed import Client, LocalCluster
  
-# ── import shared helpers ──────────────────────────────────────────────────────
+
 from mandelbrot_core import (
     build_complex_grid,
     mandelbrot_numpy,
-    mandelbrot_block,   # pure NumPy — Dask maps this over blocks (Note 2, 4)
+    mandelbrot_block,   
     timed,
     plot_mandelbrot,
     plot_dask_comparison,
 )
  
  
-# ─────────────────────────────────────────────
-# Dask runner  (local OR distributed)
-# ─────────────────────────────────────────────
+
  
 def mandelbrot_dask(width, height, chunk_size=250,
                     x_min=-2.5, x_max=1.0,
                     y_min=-1.25, y_max=1.25,
                     max_iter=100):
-    """
-    Compute Mandelbrot with Dask using map_blocks.
- 
-    Key design choices (see assignment notes):
-      Note 1: chunk_size is tunable — smaller often wins locally (L2 cache fit).
-      Note 2: map_blocks treats mandelbrot_block as ONE atomic op per chunk,
-              avoiding enormous scheduling overhead from per-iteration tracking.
-      Note 3: early-exit inside mandelbrot_block when all points diverged.
-      Note 4: mandelbrot_block uses plain NumPy arrays internally.
- 
-    Parameters
-    ----------
-    width, height : grid resolution
-    chunk_size    : rows (and cols) per Dask chunk — tune this! (Note 1)
-    max_iter      : maximum iterations per point
- 
-    Returns
-    -------
-    M : np.ndarray (int32), shape (height, width)
-    """
+    
     C = build_complex_grid(width, height, x_min, x_max, y_min, y_max)
  
-    # Wrap in Dask array — chunk_size controls parallelism granularity
+    
     C_dask = da.from_array(C, chunks=(chunk_size, chunk_size))
  
-    # map_blocks applies mandelbrot_block to each chunk independently (Note 2)
+    
     M_dask = C_dask.map_blocks(
         mandelbrot_block,
         dtype=np.int32,
@@ -58,9 +37,7 @@ def mandelbrot_dask(width, height, chunk_size=250,
     return M_dask.compute()   # triggers computation (local or distributed)
  
  
-# ─────────────────────────────────────────────
-# Experiment A – chunk size sweep (local)
-# ─────────────────────────────────────────────
+
  
 def experiment_chunk_size_dask(width=1000, height=1000,
                                max_iter=100, repeats=3):
