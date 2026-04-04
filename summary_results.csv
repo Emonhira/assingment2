@@ -1,0 +1,4 @@
+Implementation,Time (s),Speedup
+NumPy vectorized,14.216,1.0
+"Parallel (P=4, chunk=50)",4.217,3.37
+Dask local (chunk=250),0.735,3.08
