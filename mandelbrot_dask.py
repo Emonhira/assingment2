@@ -64,10 +64,7 @@ def mandelbrot_dask(width, height, chunk_size=250,
  
 def experiment_chunk_size_dask(width=1000, height=1000,
                                max_iter=100, repeats=3):
-    """
-    Sweep chunk sizes on a local Dask scheduler.
-    Returns DataFrame: chunk_size | time
-    """
+    
     chunk_sizes = [32, 64, 128, 250, 500, 1000]
     rows = []
  
@@ -88,16 +85,11 @@ def experiment_chunk_size_dask(width=1000, height=1000,
     return pd.DataFrame(rows)
  
  
-# ─────────────────────────────────────────────
-# Experiment B – Dask vs NumPy across grid sizes
-# ─────────────────────────────────────────────
+
  
 def experiment_dask_vs_numpy(sizes=None, best_chunk=100,
                               max_iter=100, repeats=3):
-    """
-    Compare NumPy baseline vs Dask local for growing grid sizes.
-    Returns DataFrame: size | numpy_time | dask_time | speedup
-    """
+    
     if sizes is None:
         sizes = [500, 1000, 2000, 3000]
  
@@ -128,26 +120,12 @@ def experiment_dask_vs_numpy(sizes=None, best_chunk=100,
     return pd.DataFrame(rows)
  
  
-# ─────────────────────────────────────────────
-# Experiment C – Distributed cluster
-# ─────────────────────────────────────────────
+
  
 def experiment_distributed(width=2000, height=2000,
                             best_chunk=100, max_iter=100, repeats=3,
                             scheduler_address=None):
-    """
-    Run Mandelbrot on a Dask distributed cluster.
- 
-    Parameters
-    ----------
-    scheduler_address : str or None
-        - None  → spin up a LocalCluster on this machine (simulates cluster)
-        - 'tcp://<ip>:8786' → connect to a real Strato / remote scheduler
- 
-    Returns
-    -------
-    dict with keys: mode, time, size
-    """
+   
     print(f"\n{'─'*55}")
     print(f"  Dask Experiment C: Distributed execution ({width}×{height})")
     print(f"{'─'*55}")
