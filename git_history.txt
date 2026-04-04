@@ -1,0 +1,16 @@
+6bb86d0  2026-04-04 15:58  run
+42058d0  2026-04-04 15:34  changes
+4f0d96f  2026-04-04 15:32  changes
+e304e94  2026-04-04 15:31  changes
+319ee6e  2026-04-03 18:43  changes
+aa5c8a9  2026-04-03 18:38  changes
+8d2add0  2026-04-03 18:27  changes
+c30b93c  2026-04-03 18:19  speed up vs no.processes
+ff8c390  2026-04-03 18:15  chunk size
+b2c7c1a  2026-04-03 18:10  changes
+7c8906a  2026-04-03 18:03  changes
+a21d04c  2026-04-03 17:58  numpy chunks
+3c32ef6  2026-04-03 17:55  numpy vectorised added
+014b9ee  2026-04-03 17:42  changes
+cf10cb4  2026-04-03 17:39  changes
+a0efa50  2026-04-03 17:36  files created
